@@ -12,29 +12,29 @@ class MongoDBRepository(MongoRepositoryInterface, ABC):
 
     def __init__(self, infrastructure: MongoClient):
         database = infrastructure[self.database]
-        self.connection = database[self.collection]
+        self.mongo_connection = database[self.collection]
 
     def insert_one(self, value: dict) -> bool:
         try:
-            self.connection.insert_one(value)
+            self.mongo_connection.insert_one(value)
             return True
         except errors.DuplicateKeyError:
             return False
 
     def update_one(self, identifier: str, value: dict) -> bool:
-        updates = self.connection.update_one(
+        updates = self.mongo_connection.update_one(
             {"_id": identifier},
             {"$set": value}
         )
         return updates.modified_count > 0
 
     def find_one(self, identifier: str, filter_query: dict, projection: dict) -> dict:
-        value = self.connection.find_one(
+        value = self.mongo_connection.find_one(
             {"_id": identifier, **filter_query},
             projection=projection
         )
         return value
 
     def find_all(self, query: dict, projection: dict) -> Iterator[dict]:
-        values = self.connection.find(query, projection=projection)
+        values = self.mongo_connection.find(query, projection=projection)
         return values

@@ -1,4 +1,4 @@
-from typing import Iterator, List
+from typing import List
 
 from src.core.enums.status import ContactStatus
 from src.repository.base.mongo import MongoDBRepository
@@ -11,7 +11,7 @@ class ContactRepository(MongoDBRepository):
 
     def insert_contact(self, contact: dict) -> bool:
         contact.update(ContactStatus.AVAILABLE.value)
-        return self.insert_one(contact)
+        return super().insert_one(contact)
 
     def find_contact(self, contact_id: str) -> dict:
         return self.find_one(
@@ -23,9 +23,18 @@ class ContactRepository(MongoDBRepository):
     def list_contacts(self, filter_query: dict) -> List[dict]:
         filter_query.update(ContactStatus.AVAILABLE.value)
         contacts_list = [
-            contact for contact in self.find_all(
+            contact for contact in super().find_all(
                 filter_query, projection={"active": 0}
             )
         ]
         return contacts_list
 
+    def update_contact(self, contact_id, filtered_dict) -> bool:
+        filtered_dict.update(ContactStatus.AVAILABLE.value)
+        return super().update_one(contact_id, filtered_dict)
+
+    def delete_contact(self, contact_id) -> bool:
+        return super().update_one(contact_id, ContactStatus.UNAVAILABLE.value)
+
+    def recover_contact(self, contact_id) -> bool:
+        return super().update_one(contact_id, ContactStatus.AVAILABLE.value)

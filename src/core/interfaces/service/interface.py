@@ -4,10 +4,6 @@ from typing import Any
 
 class ServiceInterface(ABC):
     @abstractmethod
-    def register(self, item: Any) -> dict:
-        pass
-
-    @abstractmethod
     def get(self, identifier: str) -> dict:
         pass
 
