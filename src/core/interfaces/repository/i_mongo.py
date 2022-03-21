@@ -11,7 +11,7 @@ class MongoRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def find_one(self, identifier: str) -> bool:
+    def find_one(self, identifier: str, filter_query: dict, projection: dict) -> bool:
         pass
 
     @abstractmethod

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from src.core.interfaces.infrastructure.i_infrastructure import InfrastructureInterface
+from src.core.interfaces.infrastructure.interface import InfrastructureInterface
 
 
 class SingletonInfrastructure(InfrastructureInterface, ABC):

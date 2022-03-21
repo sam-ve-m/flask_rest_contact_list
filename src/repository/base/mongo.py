@@ -22,13 +22,19 @@ class MongoDBRepository(MongoRepositoryInterface, ABC):
             return False
 
     def update_one(self, identifier: str, value: dict) -> bool:
-        updates = self.connection.update_one(identifier, {"$set": value})
+        updates = self.connection.update_one(
+            {"_id": identifier},
+            {"$set": value}
+        )
         return updates.modified_count > 0
 
-    def find_one(self, identifier: str) -> dict:
-        value = self.connection.find_one({"_id": identifier})
+    def find_one(self, identifier: str, filter_query: dict, projection: dict) -> dict:
+        value = self.connection.find_one(
+            {"_id": identifier, **filter_query},
+            projection=projection
+        )
         return value
 
-    def find_all(self, query: dict = {}, projection: dict = {}) -> Iterator[dict]:
+    def find_all(self, query: dict, projection: dict) -> Iterator[dict]:
         values = self.connection.find(query, projection=projection)
         return values

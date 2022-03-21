@@ -3,5 +3,6 @@ python-decouple
 flask-restful
 pydantic
 pymongo
+orjson
 redis
 flask

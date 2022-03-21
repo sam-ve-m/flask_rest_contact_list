@@ -29,7 +29,7 @@ class JsonField(reqparse.Argument):
 class JsonBodyRequestParser(reqparse.RequestParser):
     parse_value_type_methods = {
         'builtins': lambda x: x,
-        'typing': lambda x: x.__origin__
+        'typing': lambda x: x.__args__[0] if x.__args__[0].__module__ == "builtins" else x.__args__[0].__origin__
     }
 
     def __init__(self, validation_model: Type[BaseModel], all_fields_required: bool = True):
