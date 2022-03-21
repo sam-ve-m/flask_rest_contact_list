@@ -1,3 +1,4 @@
 flask-pydantic-spec
 flask-restful
+pydantic
 flask
