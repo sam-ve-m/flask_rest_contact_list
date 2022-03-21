@@ -1,18 +1,12 @@
 import orjson
 
 from src.core.entities.contact import Contact
-from src.core.interfaces.service.interface import ServiceInterface
+from src.core.interfaces.service.i_manipulator import ManipulatorServiceInterface
 from src.repository.contact import ContactRepository
 from src.services.utils.status import label_status
 
 
-class ContactsService(ContactRepository, ServiceInterface):
-    def get(self, contact_id: str) -> dict:
-        contact_object = self.find_contact(contact_id)
-        contact_id = contact_object.pop("_id")
-        contact_object.update({"contactId": contact_id})
-        return contact_object
-
+class ContactsManipulatorService(ContactRepository, ManipulatorServiceInterface):
     def list(self, filter_query: dict) -> dict:
         contacts_list = self.list_contacts(filter_query)
         list_status = len(contacts_list) > 0

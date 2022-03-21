@@ -1,12 +1,13 @@
 import orjson
 
 from src.core.entities.contact import Contact
+from src.core.interfaces.service.i_soft_delete import SoftDeleteServiceInterface
 from src.repository.cache import CacheRepository
 from src.repository.contact import ContactRepository
 from src.services.utils.status import label_status
 
 
-class SoftDelete(CacheRepository, ContactRepository):
+class SoftDelete(CacheRepository, ContactRepository, SoftDeleteServiceInterface):
     def __init__(self, mongo_infrastructure, redis_infrastructure):
         super(CacheRepository, self).__init__(redis_infrastructure)
         super(ContactRepository, self).__init__(mongo_infrastructure)
@@ -32,3 +33,14 @@ class SoftDelete(CacheRepository, ContactRepository):
         register_status = register_method(contact_as_dict)
         return label_status(register_status)
 
+    def get(self, contact_id: str) -> dict:
+        contact = self.get_cache_for_contact(contact_id)
+        if contact is None:
+            contact = self.find_contact(contact_id)
+        if contact is None:
+            return label_status(False)
+        cache_status = self.generate_cache_for_contact(contact_id, contact)
+        contact.update(label_status(cache_status))
+        contact.update({"contactId": contact_id})
+        del contact["_id"]
+        return contact

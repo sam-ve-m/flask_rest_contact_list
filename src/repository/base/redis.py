@@ -9,8 +9,8 @@ class RedisKeyDBRepository(RedisRepositoryInterface):
     def __init__(self, infrastructure: Redis):
         self.redis_connection = infrastructure
 
-    def insert_one(self, key: str, value: Any) -> bool:
-        return self.redis_connection.set(key, value)
+    def insert_one(self, key: str, value: Any, ttl_in_seconds: int = None) -> bool:
+        return self.redis_connection.set(key, value, ex=ttl_in_seconds)
 
     def delete_one(self, key: str) -> bool:
         deleted_items_count = self.redis_connection.delete(key)
@@ -20,6 +20,6 @@ class RedisKeyDBRepository(RedisRepositoryInterface):
         items_count = self.redis_connection.exists(key)
         return items_count > 0
 
-    def find_one(self, key: str) -> dict:
+    def find_one(self, key: str) -> str:
         item = self.redis_connection.get(key)
         return item

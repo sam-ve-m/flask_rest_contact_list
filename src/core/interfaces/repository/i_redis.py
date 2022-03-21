@@ -4,7 +4,7 @@ from typing import Any
 
 class RedisRepositoryInterface(ABC):
     @abstractmethod
-    def insert_one(self, key: str, value: Any) -> bool:
+    def insert_one(self, key: str, value: Any, ttl_in_seconds: int = None) -> bool:
         pass
 
     @abstractmethod

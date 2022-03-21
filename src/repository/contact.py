@@ -14,7 +14,7 @@ class ContactRepository(MongoDBRepository):
         return super().insert_one(contact)
 
     def find_contact(self, contact_id: str) -> dict:
-        return self.find_one(
+        return super().find_one(
             contact_id,
             ContactStatus.AVAILABLE.value,
             projection={"active": 0},
