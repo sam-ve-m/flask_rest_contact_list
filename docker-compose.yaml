@@ -1,0 +1,18 @@
+version: "3.8"
+
+
+services:
+  redis:
+    image: "redis"
+    ports:
+      - "4441:6379"
+    command: redis-server --requirepass password
+
+  mongo:
+    image: "mongo"
+    ports:
+      - "4442:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: storage
