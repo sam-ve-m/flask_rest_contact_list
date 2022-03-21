@@ -34,11 +34,11 @@ class ContactRepository(MongoDBRepository):
 
     def list_contacts(self, filter_query: dict) -> List[dict]:
         filter_query.update(ContactStatus.AVAILABLE.value)
-        contacts_list = [
-            contact for contact in super().find_all(
-                filter_query, projection={"active": 0}
-            )
-        ]
+        contacts_list = []
+        for contact in super().find_all(filter_query, projection={"active": 0, "address": 0}):
+            contact_id = contact.pop("_id")
+            contact.update({"contactId": contact_id})
+            contacts_list.append(contact)
         return contacts_list
 
     def update_contact(self, contact_id, filtered_dict) -> bool:

@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_pydantic_spec import FlaskPydanticSpec
 from flask_restful import Api
+from flask_cors import CORS
 
 from src.routes.resources import ContactRegisterResource, ContactGetOneResource, ContactGetAllResource, \
     ContactGetAllByLetterResource, ContactUpdateResource, ContactSoftDeleteResource, PhonesCountResource
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 contract_specification = FlaskPydanticSpec("study", title="Some title")
 contract_specification.register(app)
