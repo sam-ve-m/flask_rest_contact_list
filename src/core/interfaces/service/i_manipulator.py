@@ -10,3 +10,7 @@ class ManipulatorServiceInterface(ABC):
     @abstractmethod
     def update(self, identifier: str, item: Any) -> dict:
         pass
+
+    @abstractmethod
+    def count(self) -> dict:
+        pass

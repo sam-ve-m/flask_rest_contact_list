@@ -38,3 +38,7 @@ class MongoDBRepository(MongoRepositoryInterface, ABC):
     def find_all(self, query: dict, projection: dict) -> Iterator[dict]:
         values = self.mongo_connection.find(query, projection=projection)
         return values
+
+    def aggregate(self, pipeline: list) -> Iterator[dict]:
+        values = self.mongo_connection.aggregate(pipeline)
+        return values

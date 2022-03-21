@@ -9,6 +9,18 @@ class ContactRepository(MongoDBRepository):
     database: str = config("MONGODB_DATABASE_CONTACT")
     collection: str = config("MONGODB_COLLECTION_REGISTERS")
 
+    count_phones_pipeline = [
+        {'$project': {
+            '_id': 0,
+            'phoneList': 1
+        }},
+        {'$unwind': '$phoneList'},
+        {'$group': {
+            '_id': '$phoneList.type',
+            'Count': {'$count': {}}
+        }}
+    ]
+
     def insert_contact(self, contact: dict) -> bool:
         contact.update(ContactStatus.AVAILABLE.value)
         return super().insert_one(contact)
@@ -38,3 +50,7 @@ class ContactRepository(MongoDBRepository):
 
     def recover_contact(self, contact_id) -> bool:
         return super().update_one(contact_id, ContactStatus.AVAILABLE.value)
+
+    def count_phones_types(self) -> list:
+        phones_count = [phone_type for phone_type in super().aggregate(self.count_phones_pipeline)]
+        return phones_count

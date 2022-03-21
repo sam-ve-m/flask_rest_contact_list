@@ -24,3 +24,13 @@ class ContactsManipulatorService(ContactRepository, ManipulatorServiceInterface)
         }
         update_status = self.update_contact(contact_id, filtered_dict)
         return label_status(update_status)
+
+    def count(self) -> dict:
+        phones_types = self.count_phones_types()
+        total_registers = sum(phone_type.get("Count") for phone_type in phones_types)
+        count_status = total_registers > 0
+        return {
+            "countContacts": total_registers,
+            "countType": phones_types,
+            **label_status(count_status)
+        }

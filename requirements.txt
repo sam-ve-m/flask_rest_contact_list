@@ -1,8 +1,11 @@
 flask-pydantic-spec
 python-decouple
 flask-restful
+Flask==2.0.1
+itsdangerous==2.0.1
 pydantic
 pymongo
 orjson
 redis
 flask
+

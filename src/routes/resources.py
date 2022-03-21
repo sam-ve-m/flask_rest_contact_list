@@ -4,7 +4,7 @@ from src.infrastructure.mongo import MongoDBInfrastructure
 from src.infrastructure.redis import RedisKeyDBInfrastructure
 
 from src.routes.adapters.reqparser_to_basemodel import JsonBodyRequestParser
-from src.services.contact import ContactsManipulatorService
+from src.services.contact_manipulate import ContactsManipulatorService
 from src.services.soft_delete import SoftDelete
 
 
@@ -54,3 +54,10 @@ class ContactSoftDeleteResource(Resource):
         redis_infrastructure = RedisKeyDBInfrastructure.get_singleton_connection()
         service = SoftDelete(mongo_infrastructure, redis_infrastructure)
         return service.delete(contact_id)
+
+
+class PhonesCountResource(Resource):
+    def get(self):
+        infrastructure = MongoDBInfrastructure.get_singleton_connection()
+        service = ContactsManipulatorService(infrastructure)
+        return service.count()

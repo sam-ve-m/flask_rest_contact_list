@@ -16,3 +16,24 @@ services:
       MONGO_INITDB_ROOT_USERNAME: user
       MONGO_INITDB_ROOT_PASSWORD: password
       MONGO_INITDB_DATABASE: storage
+
+  contact_list_api:
+    image: "flask_restful_api"
+    ports:
+      - "4445:4444"
+    environment:
+      REDISKEYDB_HOST: "redis"
+      REDISKEYDB_PORT: "6379"
+      REDISKEYDB_PASSWORD: "password"
+      REDISKEYDB_DATABASE: "0"
+      REDISKEYDB_FOLDER_SOFT_DELETE: "soft_delete"
+      REDISKEYDB_FOLDER_CACHE: "cache"
+      MONGODB_USER: "user"
+      MONGODB_HOST: "mongo"
+      MONGODB_PORT: "27017"
+      MONGODB_PASSWORD: "password"
+      MONGODB_DATABASE_CONTACT: "contact"
+      MONGODB_COLLECTION_REGISTERS: "registers"
+    links:
+      - "redis:redis"
+      - "mongo:mongo"
