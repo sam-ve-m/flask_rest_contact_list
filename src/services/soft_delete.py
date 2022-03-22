@@ -34,11 +34,9 @@ class SoftDelete(CacheRepository, ContactRepository, SoftDeleteServiceInterface)
         return label_status(register_status)
 
     def get(self, contact_id: str) -> dict:
-        contact = self.get_cache_for_contact(contact_id)
-        if contact is None:
-            contact = self.find_contact(contact_id)
-        if contact is None:
-            return label_status(False)
+        if not (contact := self.get_cache_for_contact(contact_id)):
+            if not (contact := self.find_contact(contact_id)):
+                return label_status(False)
         cache_status = self.generate_cache_for_contact(contact_id, contact)
         contact.update(label_status(cache_status))
         contact.update({"contactId": contact_id})

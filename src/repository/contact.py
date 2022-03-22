@@ -13,12 +13,14 @@ class ContactRepository(MongoDBRepository):
         {'$match': ContactStatus.AVAILABLE.value},
         {'$project': {
             '_id': 0,
-            'phoneList': 1
+            'phoneList': 1,
+            'contact_id': "$_id",
         }},
         {'$unwind': '$phoneList'},
         {'$group': {
             '_id': '$phoneList.type',
-            'Count': {'$count': {}}
+            'Count': {'$count': {}},
+            'Contacts': {'$addToSet': '$contact_id'},
         }}
     ]
 

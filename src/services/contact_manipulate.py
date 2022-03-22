@@ -1,6 +1,7 @@
 import orjson
 
 from src.core.entities.contact import Contact
+from src.core.enums.phone_types import PhoneType
 from src.core.interfaces.service.i_manipulator import ManipulatorServiceInterface
 from src.repository.contact import ContactRepository
 from src.services.utils.status import label_status
@@ -26,11 +27,22 @@ class ContactsManipulatorService(ContactRepository, ManipulatorServiceInterface)
         return label_status(update_status)
 
     def count(self) -> dict:
-        phones_types = self.count_phones_types()
-        total_registers = sum(phone_type.get("Count") for phone_type in phones_types)
+        phones_types_counter = self.count_phones_types()
+        registers_ids = set()
+        phones_types = set()
+        for phone_type in phones_types_counter:
+            contacts_ids = phone_type.pop("Contacts")
+            registers_ids.update(contacts_ids)
+            phones_types.add(phone_type.get("_id"))
+        for missing_phone_type in set(PhoneType.__members__.keys()).difference(phones_types):
+            phones_types_counter.append({
+                "_id": missing_phone_type,
+                "Count": 0
+            })
+        total_registers = len(registers_ids)
         count_status = total_registers > 0
         return {
             "countContacts": total_registers,
-            "countType": phones_types,
+            "countType": phones_types_counter,
             **label_status(count_status)
         }

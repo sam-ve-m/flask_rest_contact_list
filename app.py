@@ -8,16 +8,18 @@ from src.routes.resources import ContactRegisterResource, ContactGetOneResource,
 
 app = Flask(__name__)
 CORS(app)
-api = Api(app)
+
 contract_specification = FlaskPydanticSpec("study", title="Some title")
 contract_specification.register(app)
-api.add_resource(ContactRegisterResource, '/register')
-api.add_resource(ContactGetOneResource, '/contact/<string:contact_id>')
-api.add_resource(ContactGetAllResource, '/contacts')
-api.add_resource(ContactGetAllByLetterResource, '/contacts/<string:initial_letter>')
-api.add_resource(ContactUpdateResource, '/edit/<string:contact_id>')
-api.add_resource(ContactSoftDeleteResource, '/remove/<string:contact_id>')
+
+api = Api(app)
 api.add_resource(PhonesCountResource, '/count')
+api.add_resource(ContactGetAllResource, '/contacts')
+api.add_resource(ContactRegisterResource, '/register')
+api.add_resource(ContactUpdateResource, '/edit/<string:contact_id>')
+api.add_resource(ContactGetOneResource, '/contact/<string:contact_id>')
+api.add_resource(ContactSoftDeleteResource, '/remove/<string:contact_id>')
+api.add_resource(ContactGetAllByLetterResource, '/contacts/<string:initial_letter>')
 
 
 if __name__ == '__main__':
