@@ -10,6 +10,7 @@ class ContactRepository(MongoDBRepository):
     collection: str = config("MONGODB_COLLECTION_REGISTERS")
 
     count_phones_pipeline = [
+        {'$match': ContactStatus.AVAILABLE.value},
         {'$project': {
             '_id': 0,
             'phoneList': 1
@@ -41,15 +42,19 @@ class ContactRepository(MongoDBRepository):
             contacts_list.append(contact)
         return contacts_list
 
-    def update_contact(self, contact_id, filtered_dict) -> bool:
+    def update_contact(self, contact_id: str, filtered_dict: dict) -> bool:
         filtered_dict.update(ContactStatus.AVAILABLE.value)
         return super().update_one(contact_id, filtered_dict)
 
-    def delete_contact(self, contact_id) -> bool:
+    def delete_contact(self, contact_id: str) -> bool:
         return super().update_one(contact_id, ContactStatus.UNAVAILABLE.value)
 
-    def recover_contact(self, contact_id) -> bool:
-        return super().update_one(contact_id, ContactStatus.AVAILABLE.value)
+    def recover_contact(self, contact: dict) -> bool:
+        contact_id = contact.get("_id")
+        phone_list = contact.pop("phoneList")
+        phone_list = {f"phoneList.{index}": phone for index, phone in enumerate(phone_list)}
+        contact.update(**ContactStatus.AVAILABLE.value, **phone_list)
+        return super().update_one(contact_id, contact)
 
     def count_phones_types(self) -> list:
         phones_count = [phone_type for phone_type in super().aggregate(self.count_phones_pipeline)]

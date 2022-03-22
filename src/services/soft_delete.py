@@ -14,7 +14,7 @@ class SoftDelete(CacheRepository, ContactRepository, SoftDeleteServiceInterface)
         self.register_methods_by_deletion_history = {
             False: lambda x: self.insert_contact(x),
             True: lambda x: all((
-                self.recover_contact(x.get("_id")),
+                self.recover_contact(x),
                 self.clean_deletion_history(x.get("_id")),
             ))
         }
