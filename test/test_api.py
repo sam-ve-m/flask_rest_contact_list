@@ -8,7 +8,7 @@ from test.api import Api
 @test_steps("register", "list_by_letter", "list_all", "update", "count", "delete", "find", "list_available", "count_available", "recover_contact", "empty_database")
 def test_api():
     api = Api("http://localhost:4445")
-    _clean_db(api)
+    _clean_database(api)
 
     try:
         _insert_dummies(api)
@@ -44,11 +44,11 @@ def test_api():
         _return_none_when_database_empty(api)
         yield
     except AssertionError as error:
-        _clean_db(api)
+        _clean_database(api)
         raise error
 
 
-def _clean_db(api: Api):
+def _clean_database(api: Api):
     response = api.find_all()
     registers = [contact.get('contactId') for contact in response.get("contactsList")]
     _delete_contacts(api, [registers], 1)
@@ -200,5 +200,5 @@ def _recover_deleted_contact(api: Api):
 
 
 def _return_none_when_database_empty(api: Api):
-    _clean_db(api)
+    _clean_database(api)
     _check_phones_count(api, 0)

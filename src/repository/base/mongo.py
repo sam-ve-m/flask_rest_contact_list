@@ -4,19 +4,21 @@ from typing import Iterator
 from pymongo import MongoClient, errors
 
 from src.core.interfaces.repository.i_mongo import MongoRepositoryInterface
+from src.infrastructure.mongo import MongoDBInfrastructure
 
 
 class MongoDBRepository(MongoRepositoryInterface, ABC):
     database: str
     collection: str
 
-    def __init__(self, infrastructure: MongoClient):
+    def __init__(self):
+        infrastructure: MongoClient = MongoDBInfrastructure.get_singleton_connection()
         database = infrastructure[self.database]
         self.mongo_connection = database[self.collection]
 
     def insert_one(self, value: dict) -> bool:
         try:
-            self.mongo_connection.insert_one(value)
+            self.mongo_connection.insert_one(value, )
             return True
         except errors.DuplicateKeyError:
             return False
@@ -29,10 +31,7 @@ class MongoDBRepository(MongoRepositoryInterface, ABC):
         return updates.modified_count > 0
 
     def find_one(self, identifier: str, filter_query: dict, projection: dict) -> dict:
-        value = self.mongo_connection.find_one(
-            {"_id": identifier, **filter_query},
-            projection=projection
-        )
+        value = self.mongo_connection.find_one({"_id": identifier, **filter_query})
         return value
 
     def find_all(self, query: dict, projection: dict) -> Iterator[dict]:

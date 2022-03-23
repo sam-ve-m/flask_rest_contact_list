@@ -4,7 +4,7 @@ from typing import Any
 
 class ManipulatorServiceInterface(ABC):
     @abstractmethod
-    def list(self, filter_query: dict) -> dict:
+    def list(self) -> dict:
         pass
 
     @abstractmethod

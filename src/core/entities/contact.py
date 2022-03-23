@@ -24,8 +24,9 @@ class Contact(BaseModel):
 
     @staticmethod
     def _create_id_field(values):
-        first_name = values.get("firstName")
-        last_name = values.get("lastName")
-        email = values.get("email")
-        id_hash = first_name + last_name + email
+        id_hash = (
+            values.get("firstName")
+            + values.get("lastName")
+            + values.get("email")
+        )
         values.update({"_id": id_hash})

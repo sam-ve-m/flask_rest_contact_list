@@ -7,9 +7,37 @@ from src.repository.contact import ContactRepository
 from src.services.utils.status import label_status
 
 
-class ContactsManipulatorService(ContactRepository, ManipulatorServiceInterface):
-    def list(self, filter_query: dict) -> dict:
-        contacts_list = self.list_contacts(filter_query)
+class ContactsManipulatorService(ManipulatorServiceInterface):
+    def __init__(self, repository: ContactRepository):
+        self.repository = repository
+
+    @staticmethod
+    def _filter_contact_as_list_item(contact: dict):
+        contact_id = contact.pop("_id")
+        contact.update({"contactId": contact_id})
+        del contact["address"]
+        return contact
+
+    def list(self) -> dict:
+        raw_contacts_list = self.repository.list_contacts({})
+        contacts_list = [
+            self._filter_contact_as_list_item(raw_contact)
+            for raw_contact in raw_contacts_list
+        ]
+        list_status = len(contacts_list) > 0
+        return {
+            "contactsList": contacts_list,
+            **label_status(list_status)
+        }
+
+    def list_by_letter(self, initial_letter: str) -> dict:
+        regex = f"^{initial_letter.upper()}|^{initial_letter.lower()}"
+        filter_query = {"firstName": {"$regex": regex}}
+        raw_contacts_list = self.repository.list_contacts(filter_query)
+        contacts_list = [
+            self._filter_contact_as_list_item(raw_contact)
+            for raw_contact in raw_contacts_list
+        ]
         list_status = len(contacts_list) > 0
         return {
             "contactsList": contacts_list,
@@ -23,11 +51,11 @@ class ContactsManipulatorService(ContactRepository, ManipulatorServiceInterface)
             key: contact_as_dict.get(key)
             for key in filter(lambda key: contact_as_dict.get(key), contact_as_dict)
         }
-        update_status = self.update_contact(contact_id, filtered_dict)
+        update_status = self.repository.update_contact(contact_id, filtered_dict)
         return label_status(update_status)
 
     def count(self) -> dict:
-        phones_types_counter = self.count_phones_types()
+        phones_types_counter = self.repository.count_phones_types()
         registers_ids = set()
         phones_types = set()
         for phone_type in phones_types_counter:

@@ -46,11 +46,16 @@ class JsonBodyRequestParser(reqparse.RequestParser):
         try:
             return self.validation_model(**parsed_args)
         except ValidationError as error:
-            errors = error.errors()
-            for error in errors:
-                if error.get("ctx"):
-                    del error["ctx"]
+            raw_errors = error.errors()
+            errors = self._remove_context_values_from_error_messages(raw_errors)
             abort(http_error_code, message={"errors": errors})
+
+    @staticmethod
+    def _remove_context_values_from_error_messages(errors: list) -> list:
+        for error in errors:
+            if error.get("ctx"):
+                del error["ctx"]
+        return errors
 
     @staticmethod
     def _parse_typing_type(typing_type) -> type:
