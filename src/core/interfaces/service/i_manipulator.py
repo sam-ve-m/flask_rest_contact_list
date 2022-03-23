@@ -8,6 +8,10 @@ class ManipulatorServiceInterface(ABC):
         pass
 
     @abstractmethod
+    def list_by_letter(self, initial_letter: str) -> dict:
+        pass
+
+    @abstractmethod
     def update(self, identifier: str, item: Any) -> dict:
         pass
 
