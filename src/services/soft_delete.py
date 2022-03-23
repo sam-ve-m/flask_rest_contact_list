@@ -1,4 +1,6 @@
 import orjson
+from pymongo import MongoClient
+from redis.client import Redis
 
 from src.core.entities.contact import Contact
 from src.core.interfaces.service.i_soft_delete import SoftDeleteServiceInterface
@@ -8,7 +10,7 @@ from src.services.utils.status import label_status
 
 
 class SoftDelete(CacheRepository, ContactRepository, SoftDeleteServiceInterface):
-    def __init__(self, mongo_infrastructure, redis_infrastructure):
+    def __init__(self, mongo_infrastructure: MongoClient, redis_infrastructure: Redis):
         super(CacheRepository, self).__init__(redis_infrastructure)
         super(ContactRepository, self).__init__(mongo_infrastructure)
         self.register_methods_by_deletion_history = {
