@@ -4,7 +4,7 @@ from src.repository.cache import CacheRepository
 from src.repository.contact import ContactRepository
 
 from src.routes.adapters.reqparser_to_basemodel import JsonBodyRequestParser
-from src.services.contact_manipulate import ContactsManipulatorService
+from src.services.contact_manipulator import ContactsManipulatorService
 from src.services.in_memory_contact_manipulator import InMemoryContactManipulator
 
 

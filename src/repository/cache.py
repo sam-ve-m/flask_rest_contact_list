@@ -14,19 +14,19 @@ class CacheRepository(RedisKeyDBRepository):
     def _add_cache_folder(self, key: str) -> str:
         return f"{self.soft_cache_key}:{key}"
 
-    def register_deleted_contact(self, contact_id: str) -> bool:
+    def set_inactive_contact(self, contact_id: str) -> bool:
         return self.set(self._add_soft_delete_folder(contact_id), 1)
 
-    def check_for_deletion_history(self, contact_id: str) -> bool:
+    def is_contact_inactive(self, contact_id: str) -> bool:
         return self.exists(self._add_soft_delete_folder(contact_id))
 
-    def clean_deletion_history(self, contact_id: str) -> bool:
+    def delete_contact_inactive_register(self, contact_id: str) -> bool:
         return self.delete(self._add_soft_delete_folder(contact_id))
 
-    def generate_cache_for_contact(self, contact_id: str, contact: dict) -> bool:
+    def set_contact_cache(self, contact_id: str, contact: dict) -> bool:
         contact_string = orjson.dumps(contact)
         return self.set(self._add_cache_folder(contact_id), contact_string, 300)
 
-    def get_cache_for_contact(self, contact_id: str) -> dict:
+    def get_contact_cache(self, contact_id: str) -> dict:
         contact_string = self.get(self._add_cache_folder(contact_id))
         return contact_string if contact_string is None else orjson.loads(contact_string)

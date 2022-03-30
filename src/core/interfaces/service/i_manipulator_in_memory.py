@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 
-class SoftDeleteServiceInterface(ABC):
+class InMemoryServicesInterface(ABC):
     @abstractmethod
     def get(self, identifier: str) -> dict:
         pass
